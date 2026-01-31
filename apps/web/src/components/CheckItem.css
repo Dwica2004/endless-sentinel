@@ -1,0 +1,127 @@
+.check-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.check-item:last-child {
+    border-bottom: none;
+}
+
+.check-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.check-status-icon {
+    font-size: 1.25rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.check-item.status-pass .check-status-icon {
+    color: var(--status-pass);
+}
+
+.check-item.status-warn .check-status-icon {
+    color: var(--status-warn);
+}
+
+.check-item.status-fail .check-status-icon {
+    color: var(--status-fail);
+}
+
+.check-info {
+    flex: 1;
+}
+
+.check-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.check-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.check-details {
+    margin-left: 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.detail-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+}
+
+.label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 70px;
+}
+
+.value {
+    background: var(--bg-tertiary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-family: monospace;
+}
+
+.value.error {
+    color: var(--status-fail);
+    background: rgba(248, 81, 73, 0.1);
+}
+
+.check-suggestion {
+    margin-left: 2.25rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(88, 166, 255, 0.1);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 4px;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.suggestion-icon {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.suggestion-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.suggestion-text strong {
+    color: var(--accent-blue);
+    margin-right: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .check-item {
+        padding: 1rem;
+    }
+
+    .check-details,
+    .check-suggestion {
+        margin-left: 0;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}

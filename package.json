@@ -1,0 +1,32 @@
+{
+    "name": "endless-sentinel",
+    "version": "1.0.0",
+    "description": "Local project health inspector for Endless developers",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "scripts": {
+        "build:cli": "cd apps/cli && npm run build",
+        "build:web": "cd apps/web && npm run build",
+        "build": "npm run build:cli && npm run build:web",
+        "dev:cli": "cd apps/cli && npm run dev",
+        "dev:web": "cd apps/web && npm run dev"
+    },
+    "keywords": [
+        "endless",
+        "developer-tools",
+        "inspector",
+        "cli",
+        "health-check"
+    ],
+    "author": "Endless Developer Program",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Dwica2004/endless-sentinel.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Dwica2004/endless-sentinel/issues"
+    }
+}

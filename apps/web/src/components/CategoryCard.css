@@ -1,0 +1,104 @@
+.category-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.category-card.status-pass {
+    border-left-color: var(--status-pass);
+}
+
+.category-card.status-warn {
+    border-left-color: var(--status-warn);
+}
+
+.category-card.status-fail {
+    border-left-color: var(--status-fail);
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.category-header:hover {
+    background: var(--bg-tertiary);
+}
+
+.category-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.status-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.category-card.status-pass .status-icon {
+    color: var(--status-pass);
+}
+
+.category-card.status-warn .status-icon {
+    color: var(--status-warn);
+}
+
+.category-card.status-fail .status-icon {
+    color: var(--status-fail);
+}
+
+.category-title h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.check-count {
+    background: var(--bg-tertiary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.expand-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s;
+}
+
+.expand-btn:hover {
+    color: var(--text-primary);
+}
+
+.category-content {
+    border-top: 1px solid var(--border);
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,141 @@
+.report-view {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.report-header {
+    margin-bottom: 2rem;
+}
+
+.report-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.report-title h2 {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+}
+
+.reset-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.reset-btn:hover {
+    background: var(--border);
+    color: var(--text-primary);
+}
+
+.report-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.version {
+    background: var(--bg-tertiary);
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.overall-status {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.overall-status.status-pass {
+    border-color: var(--status-pass);
+    background: linear-gradient(135deg, var(--bg-secondary), rgba(63, 185, 80, 0.05));
+}
+
+.overall-status.status-warn {
+    border-color: var(--status-warn);
+    background: linear-gradient(135deg, var(--bg-secondary), rgba(210, 153, 34, 0.05));
+}
+
+.overall-status.status-fail {
+    border-color: var(--status-fail);
+    background: linear-gradient(135deg, var(--bg-secondary), rgba(248, 81, 73, 0.05));
+}
+
+.status-badge {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.status-summary {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.stat {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.stat strong {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-right: 0.25rem;
+}
+
+.stat.pass {
+    color: var(--status-pass);
+}
+
+.stat.warn {
+    color: var(--status-warn);
+}
+
+.stat.fail {
+    color: var(--status-fail);
+}
+
+.categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .report-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .status-summary {
+        gap: 1rem;
+    }
+
+    .stat strong {
+        font-size: 1.25rem;
+    }
+}
