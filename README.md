@@ -4,6 +4,8 @@
 [![Built for Endless](https://img.shields.io/badge/Built%20for-Endless-purple)](https://endless.link)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Try_Web_UI-8B5CF6?style=for-the-badge&logo=vercel)](https://endless-sentinel-web.vercel.app)
+
 **Your Endless project health inspector — catch setup issues before you deploy.**
 
 Endless Sentinel is a comprehensive developer tool that validates your Endless development environment, Move smart contracts, network configuration, and project hygiene in seconds. Built specifically for the Endless ecosystem, it eliminates hours of debugging by catching configuration issues, security patterns, and environment problems before they become blockers.
