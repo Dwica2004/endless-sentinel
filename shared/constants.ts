@@ -18,6 +18,10 @@ export const STATUS_FAIL = 'fail' as const;
 export const CATEGORY_ENV = 'environment' as const;
 export const CATEGORY_PROJECT = 'project' as const;
 export const CATEGORY_HYGIENE = 'hygiene' as const;
+export const CATEGORY_NETWORK = 'network' as const;
+export const CATEGORY_MOVE = 'move' as const;
+export const CATEGORY_CLI = 'cli' as const;
+export const CATEGORY_SECURITY = 'security' as const;
 
 /**
  * Category display names
@@ -25,7 +29,11 @@ export const CATEGORY_HYGIENE = 'hygiene' as const;
 export const CATEGORY_NAMES: Record<string, string> = {
     [CATEGORY_ENV]: 'Environment',
     [CATEGORY_PROJECT]: 'Project Configuration',
-    [CATEGORY_HYGIENE]: 'Code Hygiene'
+    [CATEGORY_HYGIENE]: 'Code Hygiene',
+    [CATEGORY_NETWORK]: 'Endless Network',
+    [CATEGORY_MOVE]: 'Move Smart Contracts',
+    [CATEGORY_CLI]: 'Endless CLI',
+    [CATEGORY_SECURITY]: 'Security Analysis'
 };
 
 /**
@@ -39,6 +47,29 @@ export const CONFIG_FILENAME = 'sentinel.config.json' as const;
  */
 export const MIN_NODE_VERSION = '18.0.0';
 export const MIN_NPM_VERSION = '9.0.0';
+
+/**
+ * Endless Network Constants
+ */
+export const ENDLESS_NETWORKS = ['testnet', 'mainnet', 'devnet', 'localnet'] as const;
+export const ENDLESS_RPC_ENDPOINTS: Record<string, string> = {
+    testnet: 'https://testnet.endless.link',
+    mainnet: 'https://mainnet.endless.link',
+    devnet: 'https://devnet.endless.link'
+};
+
+/**
+ * Move Language Constants
+ */
+export const MOVE_FILE_EXTENSION = '.move';
+export const MOVE_TOML_FILE = 'Move.toml';
+export const MOVE_SOURCE_DIR = 'sources';
+
+/**
+ * Endless CLI Constants
+ */
+export const ENDLESS_CLI_COMMAND = 'endless';
+export const MIN_ENDLESS_CLI_VERSION = '1.0.0';
 
 /**
  * Web UI constants

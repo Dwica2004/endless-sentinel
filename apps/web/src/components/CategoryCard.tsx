@@ -6,10 +6,11 @@ import './CategoryCard.css'
 interface CategoryCardProps {
     category: CategoryResult
     categoryName: string
+    isFirst?: boolean
 }
 
-export function CategoryCard({ category, categoryName }: CategoryCardProps) {
-    const [isExpanded, setIsExpanded] = useState(true)
+export function CategoryCard({ category, categoryName, isFirst = false }: CategoryCardProps) {
+    const [isExpanded, setIsExpanded] = useState(isFirst)
 
     const statusIcon = {
         pass: '✓',

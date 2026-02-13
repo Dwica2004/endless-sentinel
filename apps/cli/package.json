@@ -1,6 +1,6 @@
 {
   "name": "@endless/sentinel-cli",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Developer readiness inspector for Endless ecosystem",
   "type": "module",
   "bin": {
@@ -11,7 +11,11 @@
     "dev": "node --loader ts-node/esm bin/sentinel.ts",
     "start": "node bin/sentinel.js"
   },
-  "keywords": ["endless", "developer-tools", "cli"],
+  "keywords": [
+    "endless",
+    "developer-tools",
+    "cli"
+  ],
   "author": "Endless Ecosystem",
   "license": "MIT",
   "dependencies": {

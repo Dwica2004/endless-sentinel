@@ -1,36 +1,63 @@
 .category-card {
-    background: var(--bg-secondary);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-left: 4px solid var(--border);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.category-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .category-card.status-pass {
     border-left-color: var(--status-pass);
+    box-shadow: -4px 0 0 0 var(--status-pass) inset, var(--shadow-sm);
+}
+
+.category-card.status-pass:hover {
+    box-shadow: -4px 0 0 0 var(--status-pass) inset,
+        0 0 20px rgba(16, 185, 129, 0.15),
+        var(--shadow-md);
 }
 
 .category-card.status-warn {
     border-left-color: var(--status-warn);
+    box-shadow: -4px 0 0 0 var(--status-warn) inset, var(--shadow-sm);
+}
+
+.category-card.status-warn:hover {
+    box-shadow: -4px 0 0 0 var(--status-warn) inset,
+        0 0 20px rgba(245, 158, 11, 0.15),
+        var(--shadow-md);
 }
 
 .category-card.status-fail {
     border-left-color: var(--status-fail);
+    box-shadow: -4px 0 0 0 var(--status-fail) inset, var(--shadow-sm);
+}
+
+.category-card.status-fail:hover {
+    box-shadow: -4px 0 0 0 var(--status-fail) inset,
+        0 0 20px rgba(239, 68, 68, 0.15),
+        var(--shadow-md);
 }
 
 .category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     cursor: pointer;
     user-select: none;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .category-header:hover {
-    background: var(--bg-tertiary);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .category-title {

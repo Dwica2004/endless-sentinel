@@ -5,25 +5,54 @@
 }
 
 :root {
-  /* Dark theme colors */
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary: #21262d;
-  --border: #30363d;
-  
+  /* Dark theme colors - Enhanced */
+  --bg-primary: #0a0e14;
+  --bg-secondary: #151922;
+  --bg-tertiary: #1f2430;
+  --bg-card: #1a1f2e;
+  --border: #2d3748;
+  --border-light: #3a4556;
+
   /* Text colors */
-  --text-primary: #e6edf3;
-  --text-secondary: #7d8590;
-  --text-muted: #48515b;
-  
-  /* Status colors */
-  --status-pass: #3fb950;
-  --status-warn: #d29922;
-  --status-fail: #f85149;
-  
-  /* Accents */
-  --accent-blue: #58a6ff;
-  --accent-purple: #bc8cff;
+  --text-primary: #e0e6f1;
+  --text-secondary: #8892a6;
+  --text-muted: #52596a;
+
+  /* Status colors - Vibrant */
+  --status-pass: #10b981;
+  --status-pass-bg: rgba(16, 185, 129, 0.1);
+  --status-pass-border: rgba(16, 185, 129, 0.3);
+
+  --status-warn: #f59e0b;
+  --status-warn-bg: rgba(245, 158, 11, 0.1);
+  --status-warn-border: rgba(245, 158, 11, 0.3);
+
+  --status-fail: #ef4444;
+  --status-fail-bg: rgba(239, 68, 68, 0.1);
+  --status-fail-border: rgba(239, 68, 68, 0.3);
+
+  /* Accents - Rich gradients */
+  --accent-blue: #3b82f6;
+  --accent-purple: #a855f7;
+  --accent-cyan: #06b6d4;
+  --accent-pink: #ec4899;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(26, 31, 46, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -38,7 +67,8 @@ body {
   min-height: 100vh;
 }
 
-code, pre {
+code,
+pre {
   font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 

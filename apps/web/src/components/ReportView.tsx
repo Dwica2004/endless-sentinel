@@ -60,11 +60,12 @@ export function ReportView({ report, onReset }: ReportViewProps) {
             </div>
 
             <div className="categories">
-                {report.categories.map((category) => (
+                {report.categories.map((category, index) => (
                     <CategoryCard
                         key={category.category}
                         category={category}
                         categoryName={CATEGORY_NAMES[category.category] || category.category}
+                        isFirst={index === 0}
                     />
                 ))}
             </div>

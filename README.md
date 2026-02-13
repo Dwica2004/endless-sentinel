@@ -1,61 +1,130 @@
-# Endless Sentinel
+# 🛡️ Endless Sentinel
 
-Local project health inspector for Endless developers.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Built for Endless](https://img.shields.io/badge/Built%20for-Endless-purple)](https://endless.link)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
-## What is this?
+**Your Endless project health inspector — catch setup issues before you deploy.**
 
-Sentinel checks if your development environment is ready before you start building on Endless. It validates Node.js versions, project config, and basic code hygiene stuff.
+Endless Sentinel is a comprehensive developer tool that validates your Endless development environment, Move smart contracts, network configuration, and project hygiene in seconds. Built specifically for the Endless ecosystem, it eliminates hours of debugging by catching configuration issues, security patterns, and environment problems before they become blockers.
 
-Instead of spending hours debugging setup issues, run Sentinel and fix problems in 30 seconds.
+---
 
-## How it works
+## 🚀 Why Sentinel?
 
-1. Run the CLI in your project folder
-2. Sentinel checks your environment and project structure
-3. Get a report (console or JSON)
-4. Fix whatever failed
+Building on Endless requires proper environment setup, Move language knowledge, network configuration, and CLI tools. **Setting all this up correctly is hard.** Sentinel automates the validation process so you can focus on building great DApps.
 
-Everything runs locally. No remote calls, no data collection.
+### Real Problems Sentinel Solves:
 
-## What it checks
+- ✅ **"Why won't my Move contract compile?"** → Sentinel checks Move.toml, source structure, and naming conventions
+- ✅ **"Is my network configured correctly?"** → Validates RPC endpoints, network settings, and account setup
+- ✅ **"Do I have the right CLI tools?"** → Checks Endless CLI installation, commands, and Move compiler
+- ✅ **"Are my dependencies up to date?"** → Validates Node.js, npm, and ecosystem versions
+- ✅ **"Is my project following best practices?"** → Checks code hygiene, gitignore rules, and documentation
 
-**Environment:**
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+Instead of spending hours debugging, **run Sentinel and fix issues in 30 seconds.**
 
-**Project:**
-- Config file exists (`sentinel.config.json`)
-- Network is valid (`testnet`, `mainnet`, or `devnet`)
-- `src/` directory present
+---
 
-**Hygiene:**
-- `.env` is in `.gitignore`
-- `node_modules` is ignored
-- `README.md` exists
+## 📊 What It Checks
 
-## Installation
+Sentinel performs **23 comprehensive checks** across 7 categories, plus powerful team collaboration tools:
+
+### 🌐 **Environment**
+- Node.js version compatibility (≥18.0.0)
+- npm version validation (≥9.0.0)
+
+### ⚙️ **Project Configuration**
+- `sentinel.config.json` presence and validity
+- Network configuration (testnet/mainnet/devnet/localnet)
+- Source directory structure
+
+### 🧹 **Code Hygiene**
+- `.env` in `.gitignore` (security)
+- `node_modules` ignored
+- README.md exists
+
+### 🌐 **Endless Network**
+- Network configuration validity
+- RPC endpoint connectivity
+- Account setup verification
+- Production vs development safety checks
+
+### 📜 **Move Smart Contracts**
+- `Move.toml` manifest validation
+- Move source files detection
+- Security pattern analysis
+- Module naming conventions (snake_case)
+- Resource usage patterns
+- Public function safety
+
+### 🔧 **Endless CLI**
+- Endless CLI installation
+- Command availability
+- Account configuration
+- CLI initialization status
+- Move compiler availability
+
+### 🔒 **Security Analysis** *(NEW in v1.2.0)*
+- **Move Vulnerability Scanner**
+  - Unprotected public functions
+  - Arithmetic overflow/underflow detection
+  - Timestamp dependency risks
+  - Missing access control
+- **Best Practices Validation**
+  - Test coverage
+  - Documentation completeness
+
+### 🤝 **Team Collaboration** *(NEW in v1.2.0)*
+- **Compare Reports** - Track improvements over time
+- **Badge Generation** - shields.io badges for README
+- **CI/CD Templates** - Auto-generate GitHub Actions, GitLab CI, CircleCI
+- **Project Scaffolding** - Create ideal Endless project structure
+
+---
+
+## 🎯 Quick Start
+
+### Installation
 
 ```bash
-# Clone the repo
+# Clone the repository
 git clone https://github.com/Dwica2004/endless-sentinel.git
 cd endless-sentinel
 
-# Build CLI
+# Install dependencies and build
 cd apps/cli
 npm install
 npm run build
 ```
 
-## Usage
-
-### Run checks
+### Usage
 
 ```bash
-# From any project
-node /path/to/endless-sentinel/apps/cli/dist/apps/cli/bin/sentinel.js
+# Run all checks
+sentinel
+
+# Save report as JSON
+sentinel --json
+
+# Compare two reports (track improvements)
+sentinel compare old-report.json new-report.json
+
+# Generate badges for README
+sentinel badges
+
+# Setup CI/CD (GitHub Actions, GitLab CI, CircleCI)
+sentinel init-ci github
+
+# Create new Endless project
+sentinel scaffold my-project
+
+# Show help
+sentinel --help
 ```
 
 **Example output:**
+
 ```
 🛡️  Endless Sentinel — Project Inspection
 
@@ -64,46 +133,94 @@ Environment
   ✓ npm 10.2.3 is compatible
 
 Project Configuration
-  ✗ sentinel.config.json missing
-    → Create sentinel.config.json with {"network": "testnet"}
+  ✓ Configuration file found
+  ✓ Network set to: testnet
+  ✓ Source directory exists
 
-Status: ❌ NOT READY
+Code Hygiene
+  ✓ .env is properly ignored by git
+  ✓ node_modules is properly ignored
+  ✓ README.md exists
+
+Endless Network
+  ✓ Network configured: testnet
+  ✓ RPC endpoint ready: https://testnet.endless.link
+  ⚠ Verify your Endless account is set up
+    → Run: endless account list
+  ✓ Using testnet (safe for development)
+
+Move Smart Contracts
+  ✓ Move.toml found and valid
+  ✓ Found 3 Move source file(s)
+  ✓ Move code structure looks good
+  ✓ Module naming follows conventions
+
+Endless CLI
+  ✓ Endless CLI is installed: v1.0.0
+  ✓ CLI commands are accessible
+  ✓ Endless account(s) configured
+  ✓ Endless CLI is configured
+  ✓ Move compiler is available via Endless CLI
+
+──────────────────────────────────────────────────
+
+Status: ✅ READY
+Total: 21 checks | ✓ 20 passed | ⚠ 1 warnings | ✗ 0 failed
 ```
 
-### Generate JSON report
+### Generate JSON Report
 
 ```bash
+# Create machine-readable report
 node /path/to/sentinel.js --json
+# Creates sentinel-report.json in your project directory
 ```
 
-This creates `sentinel-report.json` in your project directory.
-
-### View report in browser (optional)
+### View in Browser (Optional)
 
 ```bash
+# Start web UI
 cd apps/web
 npm install
 npm run dev
+
+# Open http://localhost:5173
+# Upload your sentinel-report.json for visual report
 ```
 
-Open http://localhost:5173 and upload your `sentinel-report.json`.
+---
 
-## Project structure
+## 📁 Project Structure
 
 ```
 endless-sentinel/
-├── apps/cli/        # CLI that runs checks
-├── apps/web/        # Web viewer for reports
-└── shared/          # Types and constants
+├── apps/
+│   ├── cli/              # Command-line tool (core checks)
+│   │   ├── bin/          # CLI entry point
+│   │   ├── checks/       # Check modules
+│   │   │   ├── env.ts        # Environment checks
+│   │   │   ├── project.ts    # Project config
+│   │   │   ├── hygiene.ts    # Code hygiene
+│   │   │   ├── network.ts    # Endless network
+│   │   │   ├── move.ts       # Move contracts
+│   │   │   └── cli.ts        # CLI validation
+│   │   └── dist/         # Compiled output
+│   └── web/              # Web UI for reports
+├── shared/               # Shared types & constants
+├── README.md
+└── package.json
 ```
 
-- **CLI** runs all the checks and generates JSON
-- **Web** just displays the JSON (read-only)
-- **Shared** keeps types consistent between both
+**Architecture:**
+- **CLI** performs all checks and generates JSON reports
+- **Web UI** provides visual interface for reports (read-only)
+- **Shared** maintains type consistency between CLI and web
 
-## Config file
+---
 
-Create `sentinel.config.json` in your project:
+## ⚙️ Configuration
+
+Create `sentinel.config.json` in your project root:
 
 ```json
 {
@@ -111,48 +228,216 @@ Create `sentinel.config.json` in your project:
 }
 ```
 
-Valid networks: `testnet`, `mainnet`, `devnet`
+**Valid networks:**
+- `testnet` - For testing (recommended for development)
+- `mainnet` - Production network ⚠️ Use with caution
+- `devnet` - Development network
+- `localnet` - Local Endless node
 
-## Adding custom checks
+---
 
-Create a new file in `apps/cli/checks/` and export a `runChecks()` function:
+## 🔧 Adding Custom Checks
+
+Extend Sentinel with your own validation logic:
+
+### 1. Create a new check module
 
 ```typescript
-import type { CategoryResult } from '../../../shared/schema.js';
+// apps/cli/checks/my-custom-check.ts
+import type { CategoryResult, Check } from '../../../shared/schema.js';
+import { STATUS_PASS, STATUS_FAIL } from '../../../shared/constants.js';
 
-export function runChecks(): CategoryResult {
+export function runChecks(cwd: string): CategoryResult {
+  const checks: Check[] = [
+    {
+      name: 'My Custom Check',
+      status: STATUS_PASS,
+      expected: 'something',
+      actual: 'something',
+      message: 'Check passed!',
+      suggestion: null
+    }
+  ];
+
   return {
     category: 'custom',
-    status: 'pass',
-    checks: [
-      {
-        name: 'My Check',
-        status: 'pass',
-        expected: 'something',
-        actual: 'something',
-        message: 'All good',
-        suggestion: null
-      }
-    ]
+    status: STATUS_PASS,
+    checks
   };
 }
 ```
 
-Then import it in `apps/cli/bin/sentinel.ts`.
+### 2. Register in `apps/cli/bin/sentinel.ts`
 
-## Why local-first?
+```typescript
+import * as customChecks from '../checks/my-custom-check.js';
 
-- No API calls means it works offline
+// In runAllChecks():
+const categories: CategoryResult[] = [
+  // ... existing checks
+  customChecks.runChecks(cwd)
+];
+```
+
+### 3. Add category name in `shared/constants.ts`
+
+```typescript
+export const CATEGORY_CUSTOM = 'custom' as const;
+
+export const CATEGORY_NAMES: Record<string, string> = {
+  // ... existing categories
+  [CATEGORY_CUSTOM]: 'My Custom Checks'
+};
+```
+
+---
+
+## 🎨 Features & Highlights
+
+### **Endless-Native Design**
+Built specifically for Endless ecosystem with deep integration:
+- Move language validation
+- Endless network connectivity
+- RPC endpoint verification
+- CLI toolchain checks
+
+### **Fast & Local-First**
+- All checks run locally (< 2 seconds)
+- No external API calls
+- No data collection
+- Works completely offline
 - Your code never leaves your machine
-- No authentication needed
-- Fast (checks run in <1 second)
 
-## License
+### **Actionable Insights**
+Every failed check includes:
+- What was expected
+- What was actually found
+- Specific suggestion to fix the issue
 
-MIT — do whatever you want with it.
+### **Developer-Friendly**
+- Color-coded console output
+- Machine-readable JSON reports
+- Optional web UI for visualization
+- Extensible architecture for custom checks
 
-## Built for Endless
+### **Production-Ready**
+- Type-safe TypeScript codebase
+- Comprehensive error handling
+- Exit codes for CI/CD integration
+- Modular, testable architecture
 
-Made as part of the Endless Developer Program to help builders catch setup issues early.
+---
 
-If it saved you time, share it. 🛡️
+## 🤝 Contributing
+
+Contributions are welcome! Here's how you can help:
+
+### Adding New Checks
+1. Create a new check module in `apps/cli/checks/`
+2. Follow the existing pattern (see `env.ts` as reference)
+3. Export a `runChecks()` function returning `CategoryResult`
+4. Add tests for your check logic
+5. Submit a pull request
+
+### Improving Existing Checks
+- Found a false positive? Open an issue
+- Better validation logic? Send a PR
+- New security patterns? We'd love to see them
+
+### Documentation
+- Fix typos or unclear sections
+- Add usage examples
+- Create tutorials or guides
+
+---
+
+## 📖 Documentation
+
+### For Developers
+- [Architecture Overview](./docs/architecture.md) - System design and structure
+- [API Reference](./docs/api.md) - Type definitions and interfaces
+- [Adding Custom Checks](./docs/custom-checks.md) - Extension guide
+
+### For Users
+- [Quick Start Guide](./docs/quickstart.md) - Get up and running
+- [FAQ](./docs/faq.md) - Common questions
+- [Troubleshooting](./docs/troubleshooting.md) - Fix common issues
+
+---
+
+## 🔒 Security & Privacy
+
+- ✅ **100% Local**: All checks run on your machine
+- ✅ **No Telemetry**: Zero data collection or tracking
+- ✅ **No External Calls**: No network requests (except CLI network validation)
+- ✅ **Open Source**: Full transparency - review the code yourself
+
+---
+
+## 🌟 Why Local-First?
+
+**No API calls** means:
+- Works offline (perfect for travel/remote work)
+- Your code stays private
+- No authentication required
+- Blazing fast execution (< 2 seconds)
+- No rate limits or quotas
+
+---
+
+## 📜 License
+
+MIT License - do whatever you want with it.
+
+See [LICENSE](./LICENSE) for full details.
+
+---
+
+## 🏗️ Built for Endless
+
+Created as part of the **Endless Developer Program** to help builders ship faster and avoid common setup pitfalls.
+
+Endless Sentinel saves developers time by catching issues early, enabling them to focus on what matters: **building amazing Web3 applications.**
+
+### Learn More
+- 📚 [Endless Documentation](https://docs.endless.link/)
+- 🚀 [Quick Start Guide](https://docs.endless.link/endless/devbuild/quick_start)
+- 👥 [Developer Community](https://docs.endless.link/endless/discovery/endless-developer-community)
+
+---
+
+## 💬 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Dwica2004/endless-sentinel/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Dwica2004/endless-sentinel/discussions)
+- **Endless Community**: [Join the ecosystem](https://docs.endless.link/endless/discovery/endless-developer-community)
+
+---
+
+## 🙏 Acknowledgments
+
+Built with ❤️ for the Endless developer community.
+
+Special thanks to:
+- The Endless team for building an amazing Web3 platform
+- All contributors and early testers
+- The Move community for language patterns and best practices
+
+---
+
+## ⭐ Show Your Support
+
+If Endless Sentinel saved you time, give it a star! ⭐
+
+It helps other developers discover the tool and motivates continued development.
+
+---
+
+**Ready to inspect your project? Let's go! 🛡️**
+
+```bash
+git clone https://github.com/Dwica2004/endless-sentinel.git
+cd endless-sentinel/apps/cli
+npm install && npm run build
+node dist/apps/cli/bin/sentinel.js
+```
