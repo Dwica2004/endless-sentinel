@@ -1,6 +1,6 @@
 {
     "name": "@endless/sentinel-web",
-    "version": "1.2.0",
+    "version": "2.0.0",
     "description": "Read-only report viewer for Endless Sentinel",
     "private": true,
     "scripts": {

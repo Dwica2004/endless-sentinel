@@ -79,6 +79,12 @@ export interface Report {
   
   /** Schema version (for future compatibility) */
   version?: string;
+
+  /** Overall health score (0-100) */
+  healthScore?: number;
+
+  /** Letter grade derived from health score */
+  grade?: 'A' | 'B' | 'C' | 'D' | 'F';
 }
 
 /**

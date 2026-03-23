@@ -59,6 +59,27 @@ export function ReportView({ report, onReset }: ReportViewProps) {
                 </div>
             </div>
 
+            {report.healthScore !== undefined && (
+                <div className="health-score-panel">
+                    <div className="score-ring" data-grade={report.grade}>
+                        <div className="score-value">{report.healthScore}</div>
+                        <div className="score-label">/ 100</div>
+                    </div>
+                    <div className="score-info">
+                        <div className="grade-badge" data-grade={report.grade}>
+                            Grade {report.grade}
+                        </div>
+                        <p className="score-description">
+                            {report.healthScore >= 90 ? 'Excellent! Your project is in great shape.' :
+                             report.healthScore >= 75 ? 'Good, but there are improvements to make.' :
+                             report.healthScore >= 60 ? 'Fair. Several issues need attention.' :
+                             report.healthScore >= 40 ? 'Poor. Significant problems detected.' :
+                             'Critical. Immediate action required.'}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             <div className="categories">
                 {report.categories.map((category, index) => (
                     <CategoryCard

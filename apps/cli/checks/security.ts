@@ -9,8 +9,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Move Security Scanner
- * Detects common security vulnerabilities in Move smart contracts
+ * Move Security Scanner v2.0
+ * Improved: strips comments before analysis, multi-line aware, reduced false positives
  */
 
 interface SecurityIssue {
@@ -19,58 +19,99 @@ interface SecurityIssue {
     file: string;
     line: number;
     description: string;
+    context: string;
 }
 
+/**
+ * Strip comments from Move code to prevent false positives
+ */
+function stripComments(code: string): string {
+    let result = code.replace(/\/\*[\s\S]*?\*\//g, (match) => {
+        // Preserve line count for accurate line numbers
+        return match.replace(/[^\n]/g, ' ');
+    });
+    result = result.replace(/\/\/.*$/gm, (match) => ' '.repeat(match.length));
+    return result;
+}
+
+/**
+ * Security patterns with improved matching
+ * Each pattern works on comment-stripped code to reduce false positives
+ */
 const SECURITY_PATTERNS = [
     {
-        pattern: /public\s+fun\s+\w+.*\{[^}]*abort/gi,
+        // Detect public entry functions without signer parameter (potential access control issue)
+        test: (line: string) => /public\s+entry\s+fun\s+\w+\s*\(/.test(line) && !line.includes('signer'),
         severity: 'high' as const,
-        name: 'Unprotected Public Function with Abort',
-        description: 'Public function can abort without access control'
+        name: 'Public Entry Without Access Control',
+        description: 'Public entry function without signer parameter — anyone can call this'
     },
     {
-        pattern: /\d+\s*\+\s*\w+|\w+\s*\+\s*\d+/g,
+        // Detect unchecked arithmetic in non-trivial expressions
+        test: (line: string) => {
+            // Only flag if it looks like a variable operation, not a constant
+            if (/\w+\s*\+\s*\w+/.test(line) && !line.includes('const') && !line.includes('spec')) {
+                // Exclude obvious safe patterns
+                if (line.includes('vector::length') || line.includes('.length()')) return false;
+                if (line.includes('assert!')) return false;
+                // Check for operations on variables (not just literals)
+                return /[a-z_]\w*\s*[\+\-\*]\s*[a-z_]\w*/i.test(line);
+            }
+            return false;
+        },
         severity: 'medium' as const,
         name: 'Potential Arithmetic Overflow',
-        description: 'Unchecked arithmetic operation detected'
+        description: 'Unchecked arithmetic on variables — consider using checked math or overflow guards'
     },
     {
-        pattern: /timestamp::now_seconds/gi,
+        // Detect timestamp dependency
+        test: (line: string) => /timestamp::now_seconds|timestamp::now_microseconds/.test(line),
         severity: 'medium' as const,
         name: 'Timestamp Dependency',
-        description: 'Using timestamp can lead to manipulation'
+        description: 'Relying on block timestamp can expose manipulation risks in time-sensitive logic'
     },
     {
-        pattern: /public\s+fun\s+\w+.*\(.*signer/gi,
+        // Detect transfer to arbitrary address without validation
+        test: (line: string) => /coin::transfer/.test(line) && !line.includes('signer::address_of'),
+        severity: 'high' as const,
+        name: 'Unchecked Token Transfer',
+        description: 'Token transfer without validating recipient via signer — verify this is intentional'
+    },
+    {
+        // Detect public functions that modify state without acquires
+        test: (line: string) => /public\s+(entry\s+)?fun\s+/.test(line) && line.includes('move_to') && !line.includes('acquires'),
         severity: 'low' as const,
-        name: 'Public Function with Signer',
-        description: 'Ensure proper authorization checks'
+        name: 'Resource Move Without Acquires',
+        description: 'Function uses move_to but may be missing acquires annotation'
     }
 ];
 
 function scanMoveFile(filePath: string): SecurityIssue[] {
     const issues: SecurityIssue[] = [];
 
-    if (!fs.existsSync(filePath)) {
-        return issues;
-    }
+    if (!fs.existsSync(filePath)) return issues;
 
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const lines = content.split('\n');
+    const rawContent = fs.readFileSync(filePath, 'utf-8');
+    const strippedContent = stripComments(rawContent);
+    const lines = strippedContent.split('\n');
 
-    SECURITY_PATTERNS.forEach(({ pattern, severity, name, description }) => {
-        lines.forEach((line, idx) => {
+    for (let idx = 0; idx < lines.length; idx++) {
+        const line = lines[idx].trim();
+        if (!line) continue;
+
+        for (const pattern of SECURITY_PATTERNS) {
             if (pattern.test(line)) {
                 issues.push({
-                    severity,
-                    pattern: name,
+                    severity: pattern.severity,
+                    pattern: pattern.name,
                     file: path.basename(filePath),
                     line: idx + 1,
-                    description
+                    description: pattern.description,
+                    context: line.substring(0, 80)
                 });
             }
-        });
-    });
+        }
+    }
 
     return issues;
 }
@@ -80,7 +121,7 @@ function checkMoveSecurityScan(cwd: string): Check {
 
     if (!fs.existsSync(sourcesDir)) {
         return {
-            name: 'Move Security Analysis',
+            name: 'Move Security Scan',
             status: STATUS_WARN,
             message: 'No sources directory found',
             suggestion: 'Create sources/ directory with .move files for security analysis',
@@ -89,13 +130,24 @@ function checkMoveSecurityScan(cwd: string): Check {
         };
     }
 
-    const moveFiles = fs.readdirSync(sourcesDir)
-        .filter(f => f.endsWith('.move'))
-        .map(f => path.join(sourcesDir, f));
+    // Recursively find .move files
+    const moveFiles: string[] = [];
+    function findMoveFiles(dir: string) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                findMoveFiles(fullPath);
+            } else if (entry.name.endsWith('.move')) {
+                moveFiles.push(fullPath);
+            }
+        }
+    }
+    findMoveFiles(sourcesDir);
 
     if (moveFiles.length === 0) {
         return {
-            name: 'Move Security Analysis',
+            name: 'Move Security Scan',
             status: STATUS_WARN,
             message: 'No .move files found for analysis',
             suggestion: 'Add Move smart contract files to sources/ directory',
@@ -106,92 +158,97 @@ function checkMoveSecurityScan(cwd: string): Check {
 
     const allIssues: SecurityIssue[] = [];
     moveFiles.forEach(file => {
-        const issues = scanMoveFile(file);
-        allIssues.push(...issues);
+        allIssues.push(...scanMoveFile(file));
     });
 
     const criticalCount = allIssues.filter(i => i.severity === 'critical').length;
     const highCount = allIssues.filter(i => i.severity === 'high').length;
     const mediumCount = allIssues.filter(i => i.severity === 'medium').length;
     const lowCount = allIssues.filter(i => i.severity === 'low').length;
+    const totalIssues = allIssues.length;
 
     if (criticalCount > 0 || highCount > 0) {
         const topIssue = allIssues.find(i => i.severity === 'critical' || i.severity === 'high');
         return {
-            name: 'Move Security Analysis',
+            name: 'Move Security Scan',
             status: STATUS_FAIL,
-            message: `Found ${criticalCount} critical and ${highCount} high severity issues`,
+            message: `Found ${criticalCount} critical, ${highCount} high severity issue(s) in ${moveFiles.length} file(s)`,
             suggestion: topIssue
-                ? `${topIssue.file}:${topIssue.line} - ${topIssue.description}`
+                ? `${topIssue.file}:${topIssue.line} — ${topIssue.description}`
                 : 'Review security findings carefully',
             expected: '0 critical/high severity issues',
-            actual: `${criticalCount} critical, ${highCount} high`
+            actual: `${totalIssues} total: ${criticalCount}C/${highCount}H/${mediumCount}M/${lowCount}L`
         };
     }
 
-    if (mediumCount > 0) {
+    if (mediumCount > 0 || lowCount > 0) {
         return {
-            name: 'Move Security Analysis',
+            name: 'Move Security Scan',
             status: STATUS_WARN,
-            message: `Found ${mediumCount} medium and ${lowCount} low severity issues`,
-            suggestion: 'Review and address medium severity findings',
-            expected: '0 security issues',
-            actual: `${mediumCount} medium, ${lowCount} low`
+            message: `Found ${mediumCount} medium, ${lowCount} low severity note(s) in ${moveFiles.length} file(s)`,
+            suggestion: 'Review medium-severity findings for potential improvements',
+            expected: 'Clean security scan',
+            actual: `${totalIssues} total: ${mediumCount}M/${lowCount}L`
         };
     }
 
     return {
-        name: 'Move Security Analysis',
+        name: 'Move Security Scan',
         status: STATUS_PASS,
-        message: `Scanned ${moveFiles.length} Move files - no critical issues found`,
+        message: `Scanned ${moveFiles.length} Move file(s) — no issues found`,
         suggestion: null,
         expected: 'Clean security scan',
-        actual: `${moveFiles.length} files scanned, ${lowCount} low severity notes`
+        actual: `${moveFiles.length} file(s) scanned, 0 issues`
     };
 }
 
 function checkSecurityBestPractices(cwd: string): Check {
     const sourcesDir = path.join(cwd, 'sources');
-
-    if (!fs.existsSync(sourcesDir)) {
-        return {
-            name: 'Security Best Practices',
-            status: STATUS_WARN,
-            message: 'Cannot verify best practices (no sources)',
-            suggestion: null,
-            expected: 'sources/ directory',
-            actual: 'Not found'
-        };
-    }
-
-    const moveFiles = fs.readdirSync(sourcesDir).filter(f => f.endsWith('.move'));
     const hasTests = fs.existsSync(path.join(cwd, 'tests'));
     const hasReadme = fs.existsSync(path.join(cwd, 'README.md'));
+    const hasGitignore = fs.existsSync(path.join(cwd, '.gitignore'));
+    const hasLicense = fs.existsSync(path.join(cwd, 'LICENSE'));
 
-    const score = [hasTests, hasReadme, moveFiles.length > 0].filter(Boolean).length;
+    const items = [
+        { present: hasTests, label: 'tests/' },
+        { present: hasReadme, label: 'README.md' },
+        { present: hasGitignore, label: '.gitignore' },
+        { present: hasLicense, label: 'LICENSE' },
+        { present: fs.existsSync(sourcesDir), label: 'sources/' }
+    ];
 
-    if (score === 3) {
+    const score = items.filter(i => i.present).length;
+    const missing = items.filter(i => !i.present).map(i => i.label);
+
+    if (score >= 4) {
         return {
             name: 'Security Best Practices',
             status: STATUS_PASS,
-            message: 'Project follows security best practices',
-            suggestion: null,
-            expected: 'Tests, documentation, source files',
-            actual: 'All present'
+            message: `Project follows best practices (${score}/5 checks)`,
+            suggestion: missing.length > 0 ? `Consider adding: ${missing.join(', ')}` : null,
+            expected: 'Tests, docs, gitignore, license, sources',
+            actual: `${score}/5 present`
         };
     }
 
-    const missing = [];
-    if (!hasTests) missing.push('tests/');
-    if (!hasReadme) missing.push('README.md');
+    if (score >= 2) {
+        return {
+            name: 'Security Best Practices',
+            status: STATUS_WARN,
+            message: `Missing some best practices (${score}/5)`,
+            suggestion: `Add: ${missing.join(', ')}`,
+            expected: 'Complete project structure',
+            actual: `Missing: ${missing.join(', ')}`
+        };
+    }
 
     return {
         name: 'Security Best Practices',
-        status: STATUS_WARN,
-        message: `Missing security-critical components: ${missing.join(', ')}`,
-        suggestion: 'Add comprehensive tests and documentation for security review',
+        status: STATUS_FAIL,
+        message: `Project missing critical components (${score}/5)`,
+        suggestion: `Add: ${missing.join(', ')}`,
         expected: 'Complete project structure',
-        actual: `Missing: ${missing.join(', ')}`
+        actual: `Only ${score}/5 present`
     };
 }
 

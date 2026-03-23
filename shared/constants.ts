@@ -53,10 +53,16 @@ export const MIN_NPM_VERSION = '9.0.0';
  */
 export const ENDLESS_NETWORKS = ['testnet', 'mainnet', 'devnet', 'localnet'] as const;
 export const ENDLESS_RPC_ENDPOINTS: Record<string, string> = {
-    testnet: 'https://testnet.endless.link',
-    mainnet: 'https://mainnet.endless.link',
-    devnet: 'https://devnet.endless.link'
+    testnet: 'https://rpc-testnet.endless.link',
+    mainnet: 'https://rpc.endless.link',
+    devnet: 'https://rpc-devnet.endless.link'
 };
+
+/**
+ * RPC API paths for live probing
+ */
+export const RPC_HEALTH_PATH = '/v1';
+export const RPC_LEDGER_PATH = '/v1';
 
 /**
  * Move Language Constants
@@ -82,7 +88,7 @@ export const APP_DESCRIPTION = 'Developer readiness and project health inspector
  * CLI constants
  */
 export const CLI_NAME = 'sentinel';
-export const CLI_VERSION = '1.0.0';
+export const CLI_VERSION = '2.0.0';
 
 /**
  * Exit codes (for CLI)
@@ -95,4 +101,28 @@ export const EXIT_ERROR = 3;
 /**
  * Schema version
  */
-export const SCHEMA_VERSION = '1.0.0';
+export const SCHEMA_VERSION = '2.0.0';
+
+/**
+ * Endless Framework known dependencies
+ */
+export const ENDLESS_FRAMEWORK_REPO = 'https://github.com/endless-labs/endless-move-framework.git';
+export const ENDLESS_FRAMEWORK_SUBDIRS = [
+    'endless-framework',
+    'endless-stdlib',
+    'endless-token',
+    'move-stdlib'
+] as const;
+
+/**
+ * Health Score weights (total = 100)
+ */
+export const HEALTH_WEIGHTS: Record<string, number> = {
+    environment: 10,
+    project: 15,
+    hygiene: 10,
+    network: 15,
+    move: 20,
+    cli: 5,
+    security: 25
+};

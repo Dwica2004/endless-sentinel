@@ -9,7 +9,8 @@ import {
     STATUS_WARN,
     STATUS_FAIL,
     SCHEMA_VERSION,
-    REPORT_FILENAME
+    REPORT_FILENAME,
+    CLI_VERSION
 } from '../../../shared/constants.js';
 
 // Import check modules
@@ -21,10 +22,13 @@ import * as moveChecks from '../checks/move.js';
 import * as cliChecks from '../checks/cli.js';
 import * as securityChecks from '../checks/security.js';
 
+// Import health score
+import { calculateHealthScore, printHealthScore } from '../utils/health-score.js';
+
 /**
  * Status symbols for console output
  */
-const SYMBOLS = {
+const SYMBOLS: Record<string, string> = {
     [STATUS_PASS]: '✓',
     [STATUS_WARN]: '⚠',
     [STATUS_FAIL]: '✗'
@@ -32,16 +36,36 @@ const SYMBOLS = {
 
 /**
  * Run all checks and aggregate results
+ * Network checks are now async (live RPC probe)
  */
 async function runAllChecks(cwd: string): Promise<Report> {
+    // Run sync and async checks — collect ALL results before any printing
+    const [
+        envResult,
+        projectResult,
+        hygieneResult,
+        networkResult,
+        moveResult,
+        cliResult,
+        securityResult
+    ] = await Promise.all([
+        Promise.resolve(envChecks.runChecks()),
+        Promise.resolve(projectChecks.runChecks(cwd)),
+        Promise.resolve(hygieneChecks.runChecks(cwd)),
+        networkChecks.runChecks(cwd),           // async: live RPC probe
+        Promise.resolve(moveChecks.runChecks(cwd)),
+        Promise.resolve(cliChecks.runChecks()),
+        Promise.resolve(securityChecks.runChecks(cwd))
+    ]);
+
     const categories: CategoryResult[] = [
-        envChecks.runChecks(),
-        projectChecks.runChecks(cwd),
-        hygieneChecks.runChecks(cwd),
-        networkChecks.runChecks(cwd),
-        moveChecks.runChecks(cwd),
-        cliChecks.runChecks(),
-        securityChecks.runChecks(cwd)
+        envResult,
+        projectResult,
+        hygieneResult,
+        networkResult,
+        moveResult,
+        cliResult,
+        securityResult
     ];
 
     // Calculate summary
@@ -53,19 +77,26 @@ async function runAllChecks(cwd: string): Promise<Report> {
         failed: allChecks.filter(c => c.status === STATUS_FAIL).length
     };
 
-    return {
+    const report: Report = {
         timestamp: new Date().toISOString(),
         version: SCHEMA_VERSION,
         summary,
         categories
     };
+
+    // Calculate health score
+    const healthResult = calculateHealthScore(report);
+    report.healthScore = healthResult.score;
+    report.grade = healthResult.grade;
+
+    return report;
 }
 
 /**
  * Print human-readable report to console
  */
 function printReport(report: Report): void {
-    console.log('\n🛡️  Endless Sentinel — Project Inspection\n');
+    console.log(`\n🛡️  Endless Sentinel v${CLI_VERSION} — Project Inspection\n`);
 
     // Print each category
     for (const category of report.categories) {
@@ -73,17 +104,16 @@ function printReport(report: Report): void {
         console.log(`\n${categoryName}`);
 
         for (const check of category.checks) {
-            const symbol = SYMBOLS[check.status];
+            const symbol = SYMBOLS[check.status] || '?';
             console.log(`  ${symbol} ${check.message}`);
 
-            // Show suggestion if check failed or warned
             if (check.suggestion) {
                 console.log(`    → ${check.suggestion}`);
             }
         }
     }
 
-    // Print summary
+    // Print summary line
     console.log('\n' + '─'.repeat(50));
 
     const { summary } = report;
@@ -105,7 +135,11 @@ function printReport(report: Report): void {
     console.log(`Total: ${summary.total} checks | ` +
         `✓ ${summary.passed} passed | ` +
         `⚠ ${summary.warnings} warnings | ` +
-        `✗ ${summary.failed} failed\n`);
+        `✗ ${summary.failed} failed`);
+
+    // Print health score
+    const healthResult = calculateHealthScore(report);
+    printHealthScore(healthResult);
 }
 
 /**
@@ -125,13 +159,13 @@ function saveReport(report: Report, outputPath: string): void {
  */
 function showHelp() {
     console.log(`
-🛡️  Endless Sentinel - Project Health Inspector
+🛡️  Endless Sentinel v${CLI_VERSION} — Project Health Inspector
 
 USAGE:
   sentinel [command] [options]
 
 COMMANDS:
-  (no command)         Run all health checks
+  (no command)         Run all health checks (with live RPC probe)
   compare FILE1 FILE2  Compare two reports and show improvements
   badges               Generate shields.io badges for README
   init-ci [TYPE]       Generate CI/CD configuration (github, gitlab, circle)
@@ -143,13 +177,19 @@ OPTIONS:
 
 EXAMPLES:
   sentinel                          # Run all checks
-  sentinel --json                   # Run checks and save JSON
+  sentinel --json                   # Run checks + save JSON report
   sentinel compare old.json new.json # Compare two reports
-  sentinel badges                   # Generate badges
+  sentinel badges                   # Generate README badges
   sentinel init-ci github           # Create GitHub Actions workflow
-  sentinel scaffold my-project      # Create new project
+  sentinel scaffold my-project      # Create new Endless project
 
-For more information, visit: https://github.com/Dwica2004/endless-sentinel
+FEATURES (v2.0):
+  ✓ Live RPC probe (actual network connectivity test)
+  ✓ Move.toml dependency validator (validates against Endless framework)
+  ✓ Health score engine (0-100 weighted score + letter grade)
+  ✓ Security scanner (comment-aware, reduced false positives)
+
+For more information: https://github.com/Dwica2004/endless-sentinel
 `);
 }
 
@@ -161,14 +201,12 @@ async function main() {
     const command = args[0];
     const cwd = process.cwd();
 
-    // Show help
     if (args.includes('--help') || args.includes('-h')) {
         showHelp();
         process.exit(0);
     }
 
     try {
-        // Handle different commands
         if (command === 'compare') {
             const { compareReports } = await import('../utils/compare.js');
             const { readFileSync } = await import('fs');
@@ -270,16 +308,13 @@ async function main() {
             const shouldOutputJson = args.includes('--json');
             const report = await runAllChecks(cwd);
 
-            // Print to console
             printReport(report);
 
-            // Optionally save JSON
             if (shouldOutputJson) {
                 const outputPath = join(cwd, REPORT_FILENAME);
                 saveReport(report, outputPath);
             }
 
-            // Exit with appropriate code
             const exitCode = report.summary.failed > 0 ? 1 : 0;
             process.exit(exitCode);
         }
@@ -290,5 +325,4 @@ async function main() {
     }
 }
 
-// Run CLI
 main();
