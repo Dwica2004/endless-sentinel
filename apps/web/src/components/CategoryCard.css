@@ -90,6 +90,10 @@
     color: var(--text-primary);
 }
 
+.category-icon {
+    font-size: 1.2rem;
+}
+
 .check-count {
     background: var(--bg-tertiary);
     padding: 0.25rem 0.75rem;
@@ -97,6 +101,37 @@
     font-size: 0.75rem;
     color: var(--text-secondary);
     font-weight: 500;
+}
+
+.category-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    gap: 0.2rem;
+}
+
+.pill.pass {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--status-pass);
+}
+
+.pill.warn {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--status-warn);
+}
+
+.pill.fail {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--status-fail);
 }
 
 .expand-btn {

@@ -1,0 +1,80 @@
+{
+  "timestamp": "2026-03-23T12:00:00.000Z",
+  "version": "2.0.0",
+  "healthScore": 91,
+  "grade": "A",
+  "summary": {
+    "total": 24,
+    "passed": 22,
+    "warnings": 2,
+    "failed": 0
+  },
+  "categories": [
+    {
+      "category": "environment",
+      "status": "pass",
+      "checks": [
+        { "name": "Node.js Version", "status": "pass", "expected": ">=18.0.0", "actual": "v20.11.0", "message": "Node.js v20.11.0 is compatible", "suggestion": null },
+        { "name": "npm Version", "status": "pass", "expected": ">=9.0.0", "actual": "10.2.4", "message": "npm 10.2.4 is compatible", "suggestion": null }
+      ]
+    },
+    {
+      "category": "project",
+      "status": "pass",
+      "checks": [
+        { "name": "Configuration File", "status": "pass", "expected": "sentinel.config.json", "actual": "sentinel.config.json", "message": "Configuration file found", "suggestion": null },
+        { "name": "Network Configuration", "status": "pass", "expected": "testnet | mainnet | devnet", "actual": "testnet", "message": "Network set to: testnet", "suggestion": null },
+        { "name": "Source Directory", "status": "pass", "expected": "src/", "actual": "src/", "message": "Source directory exists", "suggestion": null }
+      ]
+    },
+    {
+      "category": "hygiene",
+      "status": "pass",
+      "checks": [
+        { "name": ".env Security", "status": "pass", "expected": ".env in .gitignore", "actual": "ignored", "message": ".env is properly ignored by git", "suggestion": null },
+        { "name": "node_modules Tracking", "status": "pass", "expected": "node_modules in .gitignore", "actual": "ignored", "message": "node_modules is properly ignored", "suggestion": null },
+        { "name": "Documentation", "status": "pass", "expected": "README.md", "actual": "README.md", "message": "README.md exists", "suggestion": null }
+      ]
+    },
+    {
+      "category": "network",
+      "status": "pass",
+      "checks": [
+        { "name": "Network Configuration", "status": "pass", "expected": "One of: testnet, mainnet, devnet, localnet", "actual": "testnet", "message": "Network configured: testnet", "suggestion": null },
+        { "name": "Account Setup", "status": "pass", "expected": "Endless account configured", "actual": ".endless/config.yaml found", "message": "Endless account is configured", "suggestion": null },
+        { "name": "Network Safety", "status": "pass", "expected": "Appropriate network for development", "actual": "testnet", "message": "Using testnet (safe for development)", "suggestion": null },
+        { "name": "RPC Live Probe", "status": "pass", "expected": "Responsive Endless RPC", "actual": "chain_id=2 | epoch=1847 | block=12048392 | 287ms", "message": "✅ testnet RPC is LIVE [chain_id=2 | epoch=1847 | block=12048392 | 287ms]", "suggestion": null }
+      ]
+    },
+    {
+      "category": "move",
+      "status": "warn",
+      "checks": [
+        { "name": "Move Project Manifest", "status": "pass", "expected": "Move.toml", "actual": "found and valid", "message": "Move.toml found and valid", "suggestion": null },
+        { "name": "Move Dependencies", "status": "pass", "expected": "Valid framework dependencies", "actual": "2 dep(s) validated", "message": "Move dependencies valid: EndlessFramework → endless-framework ✓", "suggestion": null },
+        { "name": "Move Source Files", "status": "pass", "expected": ".move files in sources/", "actual": "3 file(s), 486 lines", "message": "Found 3 Move source file(s) (486 lines)", "suggestion": null },
+        { "name": "Move Code Quality", "status": "warn", "expected": "Move best practices", "actual": "2 module(s), entry functions ✓, resources ✓", "message": "Code structure: 2 module(s), entry functions ✓, resources ✓ — 1 suggestion(s)", "suggestion": "No #[test] annotations found — add unit tests" },
+        { "name": "Move Module Naming", "status": "pass", "expected": "snake_case naming", "actual": "all files follow convention", "message": "Move module naming follows conventions", "suggestion": null }
+      ]
+    },
+    {
+      "category": "cli",
+      "status": "warn",
+      "checks": [
+        { "name": "Endless CLI Installation", "status": "warn", "expected": "Endless CLI installed", "actual": "not found in PATH", "message": "Endless CLI not found in PATH", "suggestion": "Install Endless CLI: npm install -g @endless/cli or follow https://docs.endless.link" },
+        { "name": "CLI Commands", "status": "warn", "expected": "CLI commands available", "actual": "CLI not installed", "message": "Cannot verify CLI commands", "suggestion": "Install Endless CLI first" },
+        { "name": "Account Configuration", "status": "warn", "expected": "Endless account configured via CLI", "actual": "CLI not available", "message": "Cannot check accounts (CLI may not be fully configured)", "suggestion": "Verify Endless CLI installation and run: endless init" },
+        { "name": "CLI Initialization", "status": "warn", "expected": "CLI initialized", "actual": "unknown", "message": "Endless CLI may need initialization", "suggestion": "Run: endless init to set up your CLI configuration" },
+        { "name": "Move Compiler", "status": "warn", "expected": "Move compiler available", "actual": "CLI not found", "message": "Cannot verify Move compiler availability", "suggestion": "Ensure Endless CLI includes Move toolchain" }
+      ]
+    },
+    {
+      "category": "security",
+      "status": "pass",
+      "checks": [
+        { "name": "Move Security Scan", "status": "pass", "expected": "Clean security scan", "actual": "3 file(s) scanned, 0 issues", "message": "Scanned 3 Move file(s) — no issues found", "suggestion": null },
+        { "name": "Security Best Practices", "status": "pass", "expected": "Tests, docs, gitignore, license, sources", "actual": "5/5 present", "message": "Project follows best practices (5/5 checks)", "suggestion": null }
+      ]
+    }
+  ]
+}

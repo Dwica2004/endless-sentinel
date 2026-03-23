@@ -298,3 +298,73 @@
         margin-left: 3rem;
     }
 }
+
+/* ─── Tab Navigation ─────────────────────────────── */
+.tab-nav {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 1400px;
+    margin: 1rem auto 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    margin-bottom: -1px;
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.03);
+}
+
+.tab-btn.active {
+    color: var(--accent-purple);
+    border-bottom-color: var(--accent-purple);
+    font-weight: 600;
+}
+
+/* ─── Tools Page ─────────────────────────────────── */
+.tools-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.tools-header {
+    padding: 2rem 0 1.5rem;
+}
+
+.tools-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.tools-header p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 600px) {
+    .tab-nav { overflow-x: auto; }
+    .tab-btn { padding: 0.55rem 0.85rem; font-size: 0.8rem; }
+    .tools-page { padding: 0 0.75rem; }
+}

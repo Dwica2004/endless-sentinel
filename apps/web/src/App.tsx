@@ -2,10 +2,15 @@ import { useState } from 'react'
 import type { Report } from '../../../shared/schema'
 import { ReportView } from './components/ReportView'
 import { UploadZone } from './components/UploadZone'
+import { NetworkProbe } from './components/NetworkProbe'
+import { MoveTomlValidator } from './components/MoveTomlValidator'
 import './App.css'
+
+type Tab = 'report' | 'probe' | 'validator'
 
 function App() {
     const [report, setReport] = useState<Report | null>(null)
+    const [activeTab, setActiveTab] = useState<Tab>('report')
 
     const handleFileUpload = (file: File) => {
         const reader = new FileReader()
@@ -13,16 +18,32 @@ function App() {
             try {
                 const json = JSON.parse(e.target?.result as string)
                 setReport(json)
-            } catch (error) {
-                alert('Invalid JSON file')
+                setActiveTab('report')
+            } catch {
+                alert('Invalid JSON file. Please select a valid sentinel-report.json')
             }
         }
         reader.readAsText(file)
     }
 
-    const handleReset = () => {
-        setReport(null)
+    const handleDemo = async () => {
+        try {
+            const res = await fetch('/demo-report.json')
+            const json = await res.json()
+            setReport(json)
+            setActiveTab('report')
+        } catch {
+            alert('Could not load demo report')
+        }
     }
+
+    const handleReset = () => setReport(null)
+
+    const TABS: Array<{ id: Tab; label: string; icon: string }> = [
+        { id: 'report', label: 'Report Viewer', icon: '📊' },
+        { id: 'probe', label: 'RPC Probe', icon: '🌐' },
+        { id: 'validator', label: 'Move.toml', icon: '📄' }
+    ]
 
     return (
         <div className="app">
@@ -32,15 +53,54 @@ function App() {
                         <img src="/logo.png" alt="Endless Sentinel" className="logo-icon" />
                         <h1>Endless Sentinel</h1>
                     </div>
-                    <p className="tagline">Local Project Health Inspector • Report Viewer</p>
+                    <p className="tagline">Local Project Health Inspector • Developer Tools</p>
                 </div>
+
+                {/* Tab navigation */}
+                <nav className="tab-nav">
+                    {TABS.map(tab => (
+                        <button
+                            key={tab.id}
+                            className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            <span>{tab.icon}</span>
+                            {tab.label}
+                        </button>
+                    ))}
+                </nav>
             </header>
 
             <main className="app-main">
-                {!report ? (
-                    <UploadZone onFileUpload={handleFileUpload} />
-                ) : (
-                    <ReportView report={report} onReset={handleReset} />
+                {activeTab === 'report' && (
+                    !report ? (
+                        <UploadZone
+                            onFileUpload={handleFileUpload}
+                            onDemo={handleDemo}
+                        />
+                    ) : (
+                        <ReportView report={report} onReset={handleReset} />
+                    )
+                )}
+
+                {activeTab === 'probe' && (
+                    <div className="tools-page">
+                        <div className="tools-header">
+                            <h2>Live RPC Probe</h2>
+                            <p>Test Endless network connectivity directly from your browser — no CLI needed.</p>
+                        </div>
+                        <NetworkProbe />
+                    </div>
+                )}
+
+                {activeTab === 'validator' && (
+                    <div className="tools-page">
+                        <div className="tools-header">
+                            <h2>Move.toml Validator</h2>
+                            <p>Paste your Move.toml to validate dependencies against the Endless framework — no CLI needed.</p>
+                        </div>
+                        <MoveTomlValidator />
+                    </div>
                 )}
             </main>
 
@@ -95,7 +155,7 @@ function App() {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>© 2026 Endless Sentinel. Built for the <a href="https://endless.link" target="_blank" rel="noopener noreferrer">Endless</a> community.</p>
+                    <p>© 2026 Endless Sentinel <strong>v2.0.0</strong> · Live RPC Probe · Health Score · Move.toml Validator · Built for the <a href="https://endless.link" target="_blank" rel="noopener noreferrer">Endless</a> community.</p>
                 </div>
             </footer>
         </div>

@@ -3,10 +3,13 @@ import './UploadZone.css'
 
 interface UploadZoneProps {
     onFileUpload: (file: File) => void
+    onDemo?: () => void
 }
 
-export function UploadZone({ onFileUpload }: UploadZoneProps) {
+
+export function UploadZone({ onFileUpload, onDemo }: UploadZoneProps) {
     const [isDragging, setIsDragging] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault()
@@ -23,15 +26,17 @@ export function UploadZone({ onFileUpload }: UploadZoneProps) {
 
         const file = e.dataTransfer.files[0]
         if (file && file.name.endsWith('.json')) {
+            setError(null)
             onFileUpload(file)
         } else {
-            alert('Please select a .json report file')
+            setError('Please drop a valid .json report file')
         }
     }
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
+            setError(null)
             onFileUpload(file)
         }
     }
@@ -44,44 +49,88 @@ export function UploadZone({ onFileUpload }: UploadZoneProps) {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
             >
-                <div className="upload-icon">📊</div>
-                <h2>View Your Local Sentinel Report</h2>
+                <div className="upload-icon">
+                    <img src="/logo.png" alt="Endless Sentinel" className="upload-logo" />
+                </div>
+                <h2>Endless Sentinel <span className="version-tag">v2.0.0</span></h2>
                 <p className="subtitle">
-                    Open the <code>sentinel-report.json</code> generated from your project
+                    Drop your <code>sentinel-report.json</code> here to view results
                 </p>
                 <p className="local-note">
-                    Sentinel runs locally in your project directory. This viewer never scans files remotely.
+                    🔒 Local-only viewer — no files are sent to any server.
                 </p>
-                <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleFileSelect}
-                    className="file-input"
-                />
+
+                <label className="file-label">
+                    <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleFileSelect}
+                        className="file-input"
+                    />
+                    <span className="file-btn">Open Report File</span>
+                </label>
+
+                {onDemo && (
+                    <button className="demo-btn" onClick={onDemo}>
+                        ✨ Try Demo
+                    </button>
+                )}
+
+                {error && <p className="upload-error">⚠ {error}</p>}
+            </div>
+
+            <div className="feature-highlights">
+                <div className="feature-item">
+                    <span className="feature-icon">🌐</span>
+                    <div>
+                        <strong>Live RPC Probe</strong>
+                        <p>Actually pings the Endless network — returns chain_id, epoch, block height</p>
+                    </div>
+                </div>
+                <div className="feature-item">
+                    <span className="feature-icon">📄</span>
+                    <div>
+                        <strong>Move.toml Validator</strong>
+                        <p>Validates dependencies against endless-labs/endless-move-framework</p>
+                    </div>
+                </div>
+                <div className="feature-item">
+                    <span className="feature-icon">📊</span>
+                    <div>
+                        <strong>Health Score</strong>
+                        <p>Weighted 0–100 score + letter grade per project</p>
+                    </div>
+                </div>
+                <div className="feature-item">
+                    <span className="feature-icon">🔒</span>
+                    <div>
+                        <strong>Security Scanner v2</strong>
+                        <p>Comment-aware Move vulnerability detection</p>
+                    </div>
+                </div>
             </div>
 
             <div className="instructions">
-                <h3>Generate a Local Sentinel Report</h3>
-                <p className="instructions-intro">
-                    Run Sentinel inside your project directory to inspect your development environment:
-                </p>
+                <h3>How to generate a report</h3>
                 <ol>
                     <li>
-                        Navigate to your project: <code>cd /path/to/your/project</code>
+                        Clone &amp; build: <code>git clone https://github.com/Dwica2004/endless-sentinel.git</code>
                     </li>
                     <li>
-                        Run Sentinel locally: <code>node path/to/sentinel.js --json</code>
+                        <code>cd endless-sentinel/apps/cli &amp;&amp; npm install &amp;&amp; npm run build</code>
                     </li>
                     <li>
-                        A report file (<code>sentinel-report.json</code>) will be created in your project
+                        Navigate to your project: <code>cd /path/to/your-endless-project</code>
                     </li>
                     <li>
-                        Open the report file here to view the inspection results
+                        Run: <code>node dist/apps/cli/bin/sentinel.js --json</code>
+                    </li>
+                    <li>
+                        Upload the generated <code>sentinel-report.json</code> here
                     </li>
                 </ol>
                 <div className="local-emphasis">
-                    <strong>⚡ Local-first design:</strong> All checks run on your machine.
-                    No data is sent to external servers.
+                    <strong>⚡ 24 checks</strong> across environment, network (live), Move contracts, security analysis, and more.
                 </div>
             </div>
         </div>
