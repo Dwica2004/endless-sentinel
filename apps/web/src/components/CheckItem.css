@@ -1,106 +1,125 @@
 .check-item {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.15s;
 }
 
 .check-item:last-child {
     border-bottom: none;
 }
 
+.check-item:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Header row ── */
 .check-header {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-bottom: 0.65rem;
 }
 
 .check-status-icon {
-    font-size: 1.25rem;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 700;
     flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+    margin-top: 1px;
 }
 
-.check-item.status-pass .check-status-icon {
-    color: var(--status-pass);
-}
-
-.check-item.status-warn .check-status-icon {
-    color: var(--status-warn);
-}
-
-.check-item.status-fail .check-status-icon {
-    color: var(--status-fail);
-}
+.check-item.status-pass .check-status-icon { color: var(--status-pass); }
+.check-item.status-warn .check-status-icon { color: var(--status-warn); }
+.check-item.status-fail .check-status-icon { color: var(--status-fail); }
 
 .check-info {
     flex: 1;
+    min-width: 0;
 }
 
 .check-name {
-    font-size: 1rem;
+    display: block;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
 }
 
 .check-message {
-    font-size: 0.875rem;
+    display: block;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    line-height: 1.4;
 }
 
+/* ── Detail rows: expected / actual ── */
 .check-details {
-    margin-left: 2.25rem;
+    margin-left: 1.7rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
 }
 
 .detail-row {
     display: flex;
-    gap: 0.75rem;
     align-items: baseline;
+    gap: 0.6rem;
 }
 
 .label {
-    color: var(--text-muted);
-    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-width: 70px;
-}
-
-.value {
-    background: var(--bg-tertiary);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    font-family: monospace;
-}
-
-.value.error {
-    color: var(--status-fail);
-    background: rgba(248, 81, 73, 0.1);
-}
-
-.check-suggestion {
-    margin-left: 2.25rem;
-    margin-top: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: rgba(88, 166, 255, 0.1);
-    border-left: 3px solid var(--accent-blue);
-    border-radius: 4px;
-    display: flex;
-    gap: 0.75rem;
-}
-
-.suggestion-icon {
-    font-size: 1.125rem;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    min-width: 58px;
     flex-shrink: 0;
 }
 
+.value {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.value.highlight {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--status-warn);
+}
+
+.value.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-fail);
+}
+
+/* ── Suggestion ── */
+.check-suggestion {
+    margin-left: 1.7rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.85rem;
+    background: rgba(88, 166, 255, 0.07);
+    border-left: 2px solid var(--accent-blue);
+    border-radius: 0 6px 6px 0;
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+}
+
+.suggestion-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
 .suggestion-text {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     line-height: 1.5;
 }
@@ -110,18 +129,11 @@
     margin-right: 0.25rem;
 }
 
+/* ── Responsive ── */
 @media (max-width: 768px) {
-    .check-item {
-        padding: 1rem;
-    }
-
+    .check-item { padding: 0.85rem 1rem; }
     .check-details,
-    .check-suggestion {
-        margin-left: 0;
-    }
-
-    .detail-row {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
+    .check-suggestion { margin-left: 0; }
+    .detail-row { flex-direction: column; gap: 0.2rem; }
+    .label { min-width: unset; }
 }

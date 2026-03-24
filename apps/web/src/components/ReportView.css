@@ -254,6 +254,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    align-items: start; /* KEY: each card only as tall as its content */
 }
 
 @media (max-width: 1024px) {

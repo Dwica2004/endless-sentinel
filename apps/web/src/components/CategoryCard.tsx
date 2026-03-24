@@ -21,8 +21,9 @@ const CATEGORY_ICONS: Record<string, string> = {
 }
 
 export function CategoryCard({ category, categoryName, isFirst = false }: CategoryCardProps) {
-    // Auto-expand: first category, or any failing category
-    const [isExpanded, setIsExpanded] = useState(isFirst || category.status === STATUS_FAIL)
+    // Auto-expand: first category, or any failing/warning category
+    const hasIssues = category.status === STATUS_FAIL || category.status === STATUS_WARN
+    const [isExpanded, setIsExpanded] = useState(isFirst || hasIssues)
 
     const statusIcon = {
         [STATUS_PASS]: '✓',
@@ -35,8 +36,15 @@ export function CategoryCard({ category, categoryName, isFirst = false }: Catego
     const failCount = category.checks.filter(c => c.status === STATUS_FAIL).length
     const icon = CATEGORY_ICONS[category.category] ?? '📋'
 
+    const checkStatusIcon = (status: string) => ({
+        pass: '✓',
+        warn: '⚠',
+        fail: '✗'
+    }[status] ?? '·')
+
     return (
         <div className={`category-card status-${category.status}`}>
+            {/* ── Header ── */}
             <div
                 className="category-header"
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -56,6 +64,28 @@ export function CategoryCard({ category, categoryName, isFirst = false }: Catego
                 </div>
             </div>
 
+            {/* ── Collapsed: compact check preview ── */}
+            {!isExpanded && (
+                <div className="category-preview">
+                    {category.checks.map((check, i) => (
+                        <div key={i} className={`preview-row status-${check.status}`}>
+                            <span className={`preview-dot status-${check.status}`}>
+                                {checkStatusIcon(check.status)}
+                            </span>
+                            <span className="preview-name">{check.name}</span>
+                            {check.actual && (
+                                <code className={`preview-val status-${check.status}`}>
+                                    {check.actual.length > 30
+                                        ? check.actual.slice(0, 30) + '…'
+                                        : check.actual}
+                                </code>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* ── Expanded: full detail ── */}
             {isExpanded && (
                 <div className="category-content">
                     {category.checks.map((check, index) => (
