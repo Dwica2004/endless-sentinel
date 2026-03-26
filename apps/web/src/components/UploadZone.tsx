@@ -6,7 +6,6 @@ interface UploadZoneProps {
     onDemo?: () => void
 }
 
-
 export function UploadZone({ onFileUpload, onDemo }: UploadZoneProps) {
     const [isDragging, setIsDragging] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -16,14 +15,11 @@ export function UploadZone({ onFileUpload, onDemo }: UploadZoneProps) {
         setIsDragging(true)
     }
 
-    const handleDragLeave = () => {
-        setIsDragging(false)
-    }
+    const handleDragLeave = () => setIsDragging(false)
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault()
         setIsDragging(false)
-
         const file = e.dataTransfer.files[0]
         if (file && file.name.endsWith('.json')) {
             setError(null)
@@ -35,14 +31,13 @@ export function UploadZone({ onFileUpload, onDemo }: UploadZoneProps) {
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            setError(null)
-            onFileUpload(file)
-        }
+        if (file) { setError(null); onFileUpload(file) }
     }
 
     return (
         <div className="upload-container">
+
+            {/* ── LEFT: Drop Zone ── */}
             <div
                 className={`upload-zone ${isDragging ? 'dragging' : ''}`}
                 onDragOver={handleDragOver}
@@ -52,87 +47,71 @@ export function UploadZone({ onFileUpload, onDemo }: UploadZoneProps) {
                 <div className="upload-icon">
                     <img src="/logo.png" alt="Endless Sentinel" className="upload-logo" />
                 </div>
+
                 <h2>Endless Sentinel <span className="version-tag">v2.0.0</span></h2>
+
                 <p className="subtitle">
                     Drop your <code>sentinel-report.json</code> here to view results
                 </p>
-                <p className="local-note">
-                    🔒 Local-only viewer — no files are sent to any server.
-                </p>
+                <p className="local-note">🔒 Local-only viewer — no files are sent to any server.</p>
 
-                <label className="file-label">
-                    <input
-                        type="file"
-                        accept=".json"
-                        onChange={handleFileSelect}
-                        className="file-input"
-                    />
-                    <span className="file-btn">Open Report File</span>
-                </label>
+                <div className="upload-actions">
+                    <label className="file-label">
+                        <input
+                            type="file"
+                            accept=".json"
+                            onChange={handleFileSelect}
+                            className="file-input"
+                        />
+                        <span className="file-btn">📂 Open Report File</span>
+                    </label>
 
-                {onDemo && (
-                    <button className="demo-btn" onClick={onDemo}>
-                        ✨ Try Demo
-                    </button>
-                )}
+                    {onDemo && (
+                        <button className="demo-btn" onClick={onDemo}>
+                            ✨ Try Demo
+                        </button>
+                    )}
+                </div>
 
                 {error && <p className="upload-error">⚠ {error}</p>}
             </div>
 
-            <div className="feature-highlights">
-                <div className="feature-item">
-                    <span className="feature-icon">🌐</span>
-                    <div>
-                        <strong>Live RPC Probe</strong>
-                        <p>Actually pings the Endless network — returns chain_id, epoch, block height</p>
-                    </div>
+            {/* ── RIGHT: Info Panel ── */}
+            <div className="upload-right-panel">
+                {/* Feature cards */}
+                <div className="feature-highlights">
+                    {[
+                        { icon: '🌐', title: 'Live RPC Probe', desc: 'Pings the Endless network — returns chain_id, epoch, block height, response time' },
+                        { icon: '📄', title: 'Move.toml Validator', desc: 'Deep-validates deps against endless-labs/endless-move-framework' },
+                        { icon: '📊', title: 'Health Score', desc: 'Weighted 0–100 score + letter grade A–F across 7 categories' },
+                        { icon: '🔒', title: 'Security Scanner v2', desc: 'Comment-aware Move vulnerability detection — 8 pattern types' },
+                    ].map(f => (
+                        <div key={f.title} className="feature-item">
+                            <span className="feature-icon">{f.icon}</span>
+                            <div>
+                                <strong>{f.title}</strong>
+                                <p>{f.desc}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <div className="feature-item">
-                    <span className="feature-icon">📄</span>
-                    <div>
-                        <strong>Move.toml Validator</strong>
-                        <p>Validates dependencies against endless-labs/endless-move-framework</p>
-                    </div>
-                </div>
-                <div className="feature-item">
-                    <span className="feature-icon">📊</span>
-                    <div>
-                        <strong>Health Score</strong>
-                        <p>Weighted 0–100 score + letter grade per project</p>
-                    </div>
-                </div>
-                <div className="feature-item">
-                    <span className="feature-icon">🔒</span>
-                    <div>
-                        <strong>Security Scanner v2</strong>
-                        <p>Comment-aware Move vulnerability detection</p>
+
+                {/* Instructions */}
+                <div className="instructions">
+                    <h3>📋 How to generate a report</h3>
+                    <ol>
+                        <li>Clone: <code>git clone https://github.com/Dwica2004/endless-sentinel.git</code></li>
+                        <li>Build: <code>cd endless-sentinel/apps/cli && npm install && npm run build</code></li>
+                        <li>Go to your project: <code>cd /your-endless-project</code></li>
+                        <li>Run: <code>node .../sentinel.js --json</code></li>
+                        <li>Upload the generated <code>sentinel-report.json</code> here ↑</li>
+                    </ol>
+                    <div className="local-emphasis">
+                        <strong>⚡ 24 automated checks</strong> — environment, live RPC, Move contracts, security, CLI readiness, and more.
                     </div>
                 </div>
             </div>
 
-            <div className="instructions">
-                <h3>How to generate a report</h3>
-                <ol>
-                    <li>
-                        Clone &amp; build: <code>git clone https://github.com/Dwica2004/endless-sentinel.git</code>
-                    </li>
-                    <li>
-                        <code>cd endless-sentinel/apps/cli &amp;&amp; npm install &amp;&amp; npm run build</code>
-                    </li>
-                    <li>
-                        Navigate to your project: <code>cd /path/to/your-endless-project</code>
-                    </li>
-                    <li>
-                        Run: <code>node dist/apps/cli/bin/sentinel.js --json</code>
-                    </li>
-                    <li>
-                        Upload the generated <code>sentinel-report.json</code> here
-                    </li>
-                </ol>
-                <div className="local-emphasis">
-                    <strong>⚡ 24 checks</strong> across environment, network (live), Move contracts, security analysis, and more.
-                </div>
-            </div>
         </div>
     )
 }

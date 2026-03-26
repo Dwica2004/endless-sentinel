@@ -1,71 +1,114 @@
 <div align="center">
 
-<img src="apps/web/public/logo.png" alt="Endless Sentinel Logo" width="120" />
+<img src="apps/web/public/logo.png" alt="Endless Sentinel" width="100" />
 
 # Endless Sentinel
 
-**The Developer Health Inspector for the Endless Ecosystem**
+**Pre-flight checks for Endless projects.**
 
-[![Version](https://img.shields.io/badge/version-2.0.0-8B5CF6?style=flat-square)](https://github.com/Dwica2004/endless-sentinel/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Built for Endless](https://img.shields.io/badge/Built%20for-Endless%20Protocol-8B5CF6?style=flat-square)](https://endless.link)
-[![Live Demo](https://img.shields.io/badge/Live_Demo-endless--sentinel--web.vercel.app-10B981?style=flat-square&logo=vercel)](https://endless-sentinel-web.vercel.app)
+Catch broken configs, dead RPCs, bad Move.toml dependencies, and security anti-patterns — before you deploy.
 
-*Run 24 automated checks on your Endless project in under 10 seconds.*  
-*No cloud. No sign-up. No telemetry. 100% local-first.*
+[![Version](https://img.shields.io/badge/v2.0.0-8B5CF6?style=flat-square&label=version)](https://github.com/Dwica2004/endless-sentinel/releases)
+[![License: MIT](https://img.shields.io/badge/MIT-blue?style=flat-square&label=license)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Built for Endless](https://img.shields.io/badge/Endless%20Protocol-8B5CF6?style=flat-square)](https://endless.link)
 
-[**→ Try Live Demo**](https://endless-sentinel-web.vercel.app) · [**→ GitHub**](https://github.com/Dwica2004/endless-sentinel) · [**→ Endless Docs**](https://docs.endless.link)
+[Live Web UI](https://endless-sentinel-web.vercel.app) · [Report an Issue](https://github.com/Dwica2004/endless-sentinel/issues)
 
 </div>
 
 ---
 
-## Why Endless Sentinel?
+## The Problem
 
-Every Endless developer has broken a build because of:
-- A missing or wrong `rev` in `Move.toml`
-- No account configured before deploying
-- A dead RPC endpoint that silently fails
-- A Move module with unchecked arithmetic
+You're building on Endless. You write your Move modules, configure your project, set up your account — then you deploy and something breaks.
 
-Endless Sentinel catches **all of that**, before you push.
+Wrong `rev` in `Move.toml`. Dead RPC endpoint. CLI not initialized. `.env` committed to git. An unguarded `transfer` call in your contract.
 
-It's a **CLI tool** that scans your project in seconds and produces a structured JSON report. Pair it with the **web viewer** to explore results visually — or load the [live demo](https://endless-sentinel-web.vercel.app) to see what a real report looks like, right now, with no installation.
+These are preventable. Endless Sentinel prevents them.
 
 ---
 
-## Features at a Glance
+## What It Does
 
-| Feature | What it Does | v2.0 |
-|---------|-------------|------|
-| 🌐 **Live RPC Probe** | Actually pings the Endless network — returns `chain_id`, `epoch`, `block_height`, and response time (ms) | ✅ |
-| 📄 **Move.toml Validator** | Deep-parses `Move.toml` — validates git URLs against `endless-labs/endless-move-framework`, checks `subdir`, flags missing `rev` | ✅ |
-| 📊 **Health Score Engine** | Calculates a weighted 0–100 score + letter grade (A–F) based on all check results | ✅ |
-| 🔒 **Security Scanner v2** | Comment-aware `.move` scanning — detects unchecked arithmetic, unprotected transfers, timestamp dependencies, missing access control | ✅ |
-| ⚙️ **Environment Checks** | Verifies Node.js ≥18, npm ≥9, and all toolchain requirements | ✅ |
-| 🗂️ **Project Hygiene** | `.gitignore`, `.env` security, README, LICENSE, source directory structure | ✅ |
-| 🔧 **CLI Readiness** | Detects Endless CLI, checks account initialization, move compiler availability | ✅ |
-| 🖥️ **Web Report Viewer** | Upload and explore your JSON report in a browser — health score ring, category breakdown, auto-expand failures | ✅ |
-| 🎯 **Browser RPC Probe** | Ping Testnet / Mainnet / Devnet directly from the web UI — zero install needed | ✅ |
-| 📋 **Browser Move.toml Validator** | Paste your `Move.toml` and validate it instantly in the browser | ✅ |
+Sentinel runs **24 checks** against your local project and produces a structured report with a health score.
+
+```
+$ sentinel --json
+
+📊 Health Score: 91 / 100  [Grade A]
+   ✓ 22 passed   ⚠ 2 warnings   ✗ 0 failed
+```
+
+It checks **seven categories**:
+
+| Category | Checks | What it catches |
+|----------|--------|-----------------|
+| **Environment** | Node.js, npm versions | Incompatible toolchain |
+| **Project** | Config file, network target, source dir | Missing or misconfigured setup |
+| **Hygiene** | `.gitignore`, `.env`, README | Leaked secrets, missing docs |
+| **Network** | Live RPC probe, account setup | Dead endpoints, missing accounts |
+| **Move** | `Move.toml` deps, source analysis, naming | Wrong framework URLs, missing `rev`, no tests |
+| **CLI** | Endless CLI, compiler, init status | Deployment blockers |
+| **Security** | Move source scanning (8 patterns) | Unchecked math, unguarded transfers, missing signers |
+
+Every check returns `pass`, `warn`, or `fail` — with an expected value, actual value, and actionable fix suggestion.
 
 ---
 
-## Quick Start
+## How It Works
 
-### 1. Clone & Build
+**CLI** — runs locally, reads your project files, probes the network, outputs structured JSON.
+
+```bash
+# Run all checks
+sentinel
+
+# Output JSON report for the web viewer
+sentinel --json
+```
+
+**Web Viewer** — upload the JSON report to visualize results. Or use the browser-based tools directly:
+
+- **Report Viewer** — Health score ring, category breakdown, auto-expanding failures
+- **RPC Probe** — Test Testnet / Mainnet / Devnet connectivity without the CLI
+- **Move.toml Validator** — Paste and validate your deps against the Endless framework
+
+The web viewer is live at **[endless-sentinel-web.vercel.app](https://endless-sentinel-web.vercel.app)**. No login. No data sent to any server.
+
+---
+
+## Installation
 
 ```bash
 git clone https://github.com/Dwica2004/endless-sentinel.git
 cd endless-sentinel/apps/cli
-npm install
-npm run build
+npm install && npm run build
 ```
 
-### 2. Configure your project
+Requires Node.js ≥ 18.
 
-Create `sentinel.config.json` in your Endless project root:
+---
+
+## Usage
+
+Navigate to your Endless project directory first:
+
+```bash
+cd /path/to/your-endless-project
+```
+
+Then run:
+
+```bash
+# Full check suite
+node /path/to/endless-sentinel/apps/cli/dist/apps/cli/bin/sentinel.js
+
+# Generate JSON report
+node /path/to/endless-sentinel/apps/cli/dist/apps/cli/bin/sentinel.js --json
+```
+
+Create a `sentinel.config.json` in your project root to configure:
 
 ```json
 {
@@ -75,130 +118,102 @@ Create `sentinel.config.json` in your Endless project root:
 }
 ```
 
-### 3. Run
-
-```bash
-# Navigate to your Endless project
-cd /path/to/your-endless-project
-
-# Run all checks
-node /path/to/endless-sentinel/apps/cli/dist/apps/cli/bin/sentinel.js
-
-# Output JSON report (for web viewer)
-node /path/to/endless-sentinel/apps/cli/dist/apps/cli/bin/sentinel.js --json
-```
-
-### 4. View Results
-
-Upload the generated `sentinel-report.json` to **[endless-sentinel-web.vercel.app](https://endless-sentinel-web.vercel.app)** to explore results visually.
+Upload the generated `sentinel-report.json` to the [web viewer](https://endless-sentinel-web.vercel.app) to explore results.
 
 ---
 
-## What the CLI Output Looks Like
+## Example Output
 
 ```
-╔════════════════════════════════════════╗
-║   Endless Sentinel v2.0.0              ║
-║   Project Health Inspector             ║
-╚════════════════════════════════════════╝
+╔═══════════════════════════════════════════╗
+║  Endless Sentinel v2.0.0                  ║
+║  Project Health Inspector                 ║
+╚═══════════════════════════════════════════╝
 
 [Environment]
-  ✓ Node.js Version     v20.11.0 (≥18 required)
-  ✓ npm Version         10.2.4 (≥9 required)
+  ✓ Node.js Version      v20.11.0
+  ✓ npm Version          10.2.4
 
-[Project]
-  ✓ Configuration File  sentinel.config.json found
-  ✓ Network             testnet
-  ✓ Source Directory    src/
+[Project Configuration]
+  ✓ Config File          sentinel.config.json
+  ✓ Network              testnet
+  ✓ Source Directory      src/
 
-[Network — Live RPC]
-  ✓ RPC Probe           testnet LIVE [chain_id=2 | epoch=1847 | block=12048392 | 287ms]
-  ✓ Account Setup       .endless/config.yaml found
+[Network]
+  ✓ RPC Probe            chain_id=2 | epoch=1847 | 287ms
+  ✓ Account Setup        .endless/config.yaml found
 
-[Move.toml]
-  ✓ Dependencies        EndlessFramework → endless-framework ✓
-  ⚠ Code Quality        No #[test] annotations found — add unit tests
+[Move]
+  ✓ Move.toml            2 deps validated
+  ✓ Source Files          3 files, 486 lines
+  ⚠ Code Quality         No #[test] annotations
 
 [Security]
-  ✓ Security Scan       3 file(s) scanned — no issues found
+  ✓ Source Scan           3 files — no issues
+  ✓ Best Practices       5/5
 
 [CLI]
-  ⚠ Endless CLI         Not found in PATH
-    → Install: npm install -g @endless/cli
+  ⚠ Endless CLI          Not in PATH
+    → npm install -g @endless/cli
 
 ────────────────────────────────────────
-📊 Health Score: 91 / 100  Grade: A
-   ✓ 22 passed  ⚠ 2 warnings  ✗ 0 failed
+📊  91 / 100   Grade A
+    ✓ 22 passed  ⚠ 2 warnings  ✗ 0 failed
 ────────────────────────────────────────
 ```
 
 ---
 
-## Health Score System
+## Health Score
 
-Endless Sentinel calculates a **weighted health score (0–100)** across all check categories:
+Sentinel calculates a weighted score (0–100) across all categories.
 
-| Grade | Score | Meaning |
+| Grade | Range | Meaning |
 |-------|-------|---------|
-| **A** | 90–100 | Excellent — project is ready |
-| **B** | 75–89 | Good — minor improvements needed |
-| **C** | 60–74 | Fair — several issues to address |
-| **D** | 40–59 | Poor — significant problems detected |
-| **F** | 0–39 | Critical — immediate action required |
+| **A** | 90–100 | Ship it. |
+| **B** | 75–89 | Almost there — minor fixes needed. |
+| **C** | 60–74 | Needs work before deploying. |
+| **D** | 40–59 | Significant issues detected. |
+| **F** | 0–39 | Do not deploy. |
 
-**Category weights:**
+Category weights reflect real-world risk:
 
-| Category | Weight | Reason |
-|----------|--------|--------|
-| Move Contracts | 30% | Core of every Endless project |
-| Security | 25% | Vulnerabilities can cause fund loss |
-| Network | 20% | Live RPC connectivity is critical |
-| CLI | 10% | Deployment readiness |
-| Environment | 8% | Toolchain compatibility |
-| Project | 4% | Config and structure |
-| Hygiene | 3% | Best practices |
-
----
-
-## Web Viewer Features
-
-The web app at **[endless-sentinel-web.vercel.app](https://endless-sentinel-web.vercel.app)** provides three tools — **all usable without installing anything**:
-
-### 📊 Report Viewer
-- Upload your `sentinel-report.json` to visualize checks
-- Health Score ring + letter grade
-- Auto-expand failing/warning categories
-- Compact check preview when categories are collapsed
-- **"✨ Try Demo"** — load a Grade A sample report instantly
-
-### 🌐 Live RPC Probe
-- Test Endless **Testnet / Mainnet / Devnet** connectivity directly from your browser
-- Shows `chain_id`, `epoch`, `block_height`, `ledger_version`, and response time
-- No CLI or Node.js required
-
-### 📄 Move.toml Validator
-- Paste your `Move.toml` content and validate it instantly
-- Checks git URLs against `endless-labs/endless-move-framework`
-- Validates `subdir` values (`endless-framework`, `endless-stdlib`, etc.)
-- Flags missing `rev` fields
-- Shows a 0–100 score with per-dependency results
+| Category | Weight | Why |
+|----------|--------|-----|
+| Move Contracts | 30% | Core logic — wrong deps break builds |
+| Security | 25% | Vulnerabilities can drain funds |
+| Network | 20% | Dead RPCs block deployment |
+| CLI | 10% | Missing toolchain = can't compile |
+| Environment | 8% | Incompatible Node.js = runtime errors |
+| Project | 4% | Config issues are quick fixes |
+| Hygiene | 3% | Best practices, low severity |
 
 ---
 
-## Security Checks in Detail
+## Security Scanner
 
-Endless Sentinel v2.0 features a **comment-aware** security scanner that reads `.move` source files and detects:
+The security scanner reads `.move` source files with **comment stripping** — it won't flag patterns inside comments or strings.
 
-| Pattern | Risk Level | Description |
-|---------|-----------|-------------|
-| Unchecked arithmetic | 🔴 High | Integer overflow/underflow without `checked_*` variants |
-| Unprotected token transfers | 🔴 High | `transfer` calls without access control guards |
-| Missing `signer` check | 🔴 High | Entry functions that don't verify caller identity |
-| Timestamp dependency | 🟡 Medium | `timestamp::now_*` used for randomness or critical logic |
-| Missing `abort` conditions | 🟡 Medium | Functions that may silently fail |
-| Direct storage mutation | 🟡 Medium | Unguarded `borrow_global_mut` patterns |
-| No unit tests | 🟡 Medium | No `#[test]` annotations found in source |
-| Missing README / LICENSE | 🟢 Low | Project best practices |
+| Pattern | Severity | Description |
+|---------|----------|-------------|
+| Unchecked arithmetic | High | Overflow/underflow without `checked_*` variants |
+| Unguarded transfers | High | `transfer` without access control |
+| Missing signer verification | High | Entry functions that don't verify caller |
+| Timestamp dependency | Medium | `timestamp::now_*` used in critical logic |
+| Missing abort conditions | Medium | Functions that silently fail |
+| Direct storage mutation | Medium | Unguarded `borrow_global_mut` |
+| No unit tests | Medium | No `#[test]` annotations in source |
+| Missing docs/license | Low | Project best practices |
+
+---
+
+## Why This Exists
+
+The Endless ecosystem is growing. More developers are building Move contracts, deploying modules, integrating with the RPC — but there's no standard tool to verify that a project is correctly set up before deployment.
+
+Sentinel fills that gap. One command, 24 checks, actionable output.
+
+It doesn't replace testing. It doesn't replace audits. It catches the setup and configuration mistakes that waste hours of debugging time.
 
 ---
 
@@ -207,184 +222,59 @@ Endless Sentinel v2.0 features a **comment-aware** security scanner that reads `
 ```
 endless-sentinel/
 ├── apps/
-│   ├── cli/                    # TypeScript CLI tool
-│   │   ├── bin/sentinel.ts     # Entry point
-│   │   ├── checks/
-│   │   │   ├── environment.ts  # Node.js / npm version checks
-│   │   │   ├── project.ts      # Config, network, source dir
-│   │   │   ├── hygiene.ts      # .gitignore, .env, docs
-│   │   │   ├── network.ts      # Live RPC probe + account
-│   │   │   ├── move.ts         # Move.toml deep validator
-│   │   │   ├── cli.ts          # Endless CLI detection
-│   │   │   ├── security.ts     # Move security scanner v2
-│   │   │   └── health-score.ts # Weighted score engine
-│   │   └── package.json
-│   └── web/                    # React + Vite web viewer
-│       ├── src/
-│       │   ├── components/
-│       │   │   ├── ReportView.tsx      # Main report display
-│       │   │   ├── CategoryCard.tsx    # Accordion category card
-│       │   │   ├── CheckItem.tsx       # Individual check row
-│       │   │   ├── UploadZone.tsx      # File upload + demo
-│       │   │   ├── NetworkProbe.tsx    # Browser RPC tester
-│       │   │   └── MoveTomlValidator.tsx # Browser TOML checker
-│       └── package.json
+│   ├── cli/                     # CLI tool (TypeScript, ESM)
+│   │   ├── bin/sentinel.ts      # Entry point
+│   │   └── checks/              # Check modules
+│   │       ├── environment.ts
+│   │       ├── project.ts
+│   │       ├── hygiene.ts
+│   │       ├── network.ts       # Live RPC probe
+│   │       ├── move.ts          # Move.toml validator
+│   │       ├── cli.ts
+│   │       ├── security.ts      # Comment-aware scanner
+│   │       └── health-score.ts  # Weighted scoring engine
+│   └── web/                     # React + Vite web viewer
+│       └── src/components/
+│           ├── ReportView.tsx
+│           ├── NetworkProbe.tsx  # Browser RPC tester
+│           └── MoveTomlValidator.tsx
 └── shared/
-    ├── schema.ts       # Report types (Report, CategoryResult, Check)
-    └── constants.ts    # RPC URLs, weights, category names
+    ├── schema.ts                # Report type definitions
+    └── constants.ts             # RPC URLs, category weights
 ```
 
 ---
 
-## Checks Reference (All 24)
+## Roadmap
 
-<details>
-<summary><strong>🖥️ Environment (2 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| Node.js Version | ≥ 18.0.0 | Ensures async/ESM compatibility |
-| npm Version | ≥ 9.0.0 | Modern lockfile and workspace support |
-
-</details>
-
-<details>
-<summary><strong>⚙️ Project Configuration (3 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| Configuration File | `sentinel.config.json` | Sentinel config present |
-| Network | testnet / mainnet / devnet | Valid network target |
-| Source Directory | `src/` | Source directory exists |
-
-</details>
-
-<details>
-<summary><strong>🧹 Code Hygiene (3 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| .env Security | In `.gitignore` | Secrets not committed |
-| node_modules | In `.gitignore` | Dependencies not tracked |
-| Documentation | `README.md` exists | Project is documented |
-
-</details>
-
-<details>
-<summary><strong>🌐 Network / RPC (4 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| Network Config | Valid network | Correctly set in config |
-| Account Setup | `.endless/config.yaml` | Endless account configured |
-| Network Safety | Testnet for dev | Not accidentally using mainnet |
-| **Live RPC Probe** | Responsive, <3000ms | Actually pings the Endless RPC |
-
-</details>
-
-<details>
-<summary><strong>📜 Move Contracts (5 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| Move.toml Present | Valid toml | Manifest exists and parses |
-| Dependencies | Official framework git URL | Against `endless-labs/endless-move-framework` |
-| Source Files | `.move` files in `sources/` | Contracts present |
-| Code Quality | Modules, entry fns, resources | Structure analysis |
-| Naming Conventions | `snake_case` | Module naming follows convention |
-
-</details>
-
-<details>
-<summary><strong>🔧 CLI Readiness (5 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| CLI Installation | `endless` in PATH | CLI available globally |
-| CLI Commands | Commands accessible | Full CLI detected |
-| Account Config | CLI account configured | Deployment account set up |
-| CLI Initializaton | `endless init` run | CLI properly initialized |
-| Move Compiler | Included in CLI | Build toolchain ready |
-
-</details>
-
-<details>
-<summary><strong>🔒 Security (2 checks)</strong></summary>
-
-| Check | Expected | Description |
-|-------|----------|-------------|
-| Move Security Scan | 0 high-severity issues | Comment-aware pattern detection |
-| Best Practices | Tests, README, `.gitignore`, LICENSE, sources | 5/5 project hygiene markers |
-
-</details>
-
----
-
-## Changelog
-
-### v2.0.0 — March 2026
-- ✅ **Live RPC Probe** — Real network connectivity test with chain data
-- ✅ **Move.toml Validator** — Deep dependency analysis against Endless framework
-- ✅ **Health Score Engine** — Weighted 0–100 score system with letter grades
-- ✅ **Security Scanner v2** — Comment-stripping, function-based patterns
-- ✅ **3-Tab Web UI** — Report Viewer + Browser RPC Probe + Browser Move.toml Validator
-- ✅ **Demo Mode** — Try web viewer instantly without installing CLI
-- ✅ **ESM migration** — Full ESM compatibility, clean async output
-- ✅ **Account detection** — Reads `.endless/config.yaml` for real account status
-
-### v1.2.0 — February 2026
-- Basic check suite (18 checks)
-- Initial web report viewer
-- JSON report output
-- Move.toml presence check
-
-### v1.0.0 — February 2026
-- Initial release
-- CLI with 12 environment and project checks
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| CLI | TypeScript, Node.js ESM, tsx |
-| Web UI | React 18, Vite, TypeScript |
-| Styling | Vanilla CSS (dark mode, glassmorphism, animations) |
-| Shared | TypeScript monorepo with npm workspaces |
-| Deploy | Vercel (web), GitHub (CLI) |
+- [ ] `npx endless-sentinel` — zero-install execution
+- [ ] CI/CD integration — GitHub Actions workflow
+- [ ] `Move.toml` lockfile validation
+- [ ] Gas estimation checks
+- [ ] Multi-project workspace scanning
+- [ ] Plugin system for custom checks
 
 ---
 
 ## Contributing
 
-Pull requests and issues are welcome.
-
 ```bash
-# Install all workspaces
+# Install dependencies
 npm install
 
 # Build CLI
 cd apps/cli && npm run build
 
-# Run web dev server
+# Start web dev server
 cd apps/web && npm run dev
 ```
+
+Issues and PRs welcome.
 
 ---
 
 ## License
 
-MIT © [Dwica2004](https://github.com/Dwica2004)
+MIT · [Dwica2004](https://github.com/Dwica2004)
 
-Built for the [Endless Protocol](https://endless.link) ecosystem. Not officially affiliated with Endless Labs.
-
----
-
-<div align="center">
-
-Made with ❤️ for the Endless developer community
-
-[![Star on GitHub](https://img.shields.io/github/stars/Dwica2004/endless-sentinel?style=social)](https://github.com/Dwica2004/endless-sentinel)
-
-</div>
+Built for the [Endless](https://endless.link) ecosystem.
